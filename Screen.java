@@ -15,6 +15,9 @@ public class Screen extends JPanel {
     private static int x;
     private static int y;
     private List<int[]> points = new ArrayList<>();
+    private int startingX = 0;
+    private int startingY = 0;
+    private double area, Area = 0;
 
     public Screen(){
 
@@ -47,11 +50,11 @@ public class Screen extends JPanel {
             @Override
             public void run(){
                 if(isMousePressed){
-                    System.out.println(x + "\t" + y);
+                    //System.out.println(x + "\t" + y);
                     repaint();
                 }
             }
-        }, 0, 1); // Ejecuta cada 1 segundo
+        }, 0, 1); // Ejecuta cada 0,001 segundo
     }
 
     @Override
@@ -62,12 +65,34 @@ public class Screen extends JPanel {
         if(clearScreen){
             points.clear();
             clearScreen = false;
+            System.out.println("1:"+area);
+            System.out.println("2:"+Area);
         } else{
+            int localX = 0;
+            int localY = 0;
             for(int[] point: points){
-            g.fillRect(point[0], point[1], 3, 3);
+                if(localX == localY && localX == 0){
+                    g.fillRect(point[0], point[1], 3, 3);
+                    startingX = point[0];
+                    startingY = point[1];
+                    area = 0;
+                } else {
+                    g.drawLine(localX, localY, point[0], point[1]);
+                    //g.fillRect(point[0], point[1], 3, 3);
+                    area += calculateArea(localX, localY, point[0], point[1]);
+                }
+                localX = point[0];
+                localY = point[1];
             }
         }
     }
 
+    public double calculateArea(int absoluteWidth1,int absoluteHeight1,int absoluteWidth2,int absoluteHeight2){
+        int Area1 = (absoluteWidth2 - absoluteWidth1) * (startingY - absoluteHeight1);
+        int Area2 = (absoluteWidth2 - absoluteWidth1) * (startingY - absoluteHeight2);
+        double differentialOfArea = (Area1 + Area2)/2.0;
+        return differentialOfArea;
+
+    }
 
 }
