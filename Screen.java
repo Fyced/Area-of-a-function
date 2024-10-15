@@ -8,14 +8,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.JPanel;
 
-
 public class Screen extends JPanel {
     private static boolean isMousePressed = false;
     private static boolean clearScreen = false;
     private static int x;
     private static int y;
     private List<int[]> points = new ArrayList<>();
-    private int startingX = 0;
     private int startingY = 0;
     private double area = 0;
     
@@ -67,7 +65,8 @@ public class Screen extends JPanel {
             points.clear();
             clearScreen = false;
             if(area != 0){
-                System.out.printf("Area: %.4f cm^2", area/(37.8*37.8) );
+                System.out.printf("Area: %.4f cm^2\n", area/(37.8*37.8) );
+                area = 0;
             }
         } else{
             int localX = 0;
@@ -75,7 +74,6 @@ public class Screen extends JPanel {
             for(int[] point: points){
                 if(localX == localY && localX == 0){
                     g.fillRect(point[0], point[1], 3, 3);
-                    startingX = point[0];
                     startingY = point[1];
                     area = 0;
                 } else {
@@ -94,7 +92,5 @@ public class Screen extends JPanel {
         int Area2 = (absoluteWidth2 - absoluteWidth1) * (startingY - absoluteHeight2);
         double differentialOfArea = (Area1 + Area2)/2.0;
         return differentialOfArea;
-
     }
-
 }
