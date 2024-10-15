@@ -17,7 +17,7 @@ public class Screen extends JPanel {
     private List<int[]> points = new ArrayList<>();
     private int startingX = 0;
     private int startingY = 0;
-    private double area, Area = 0;
+    private double area = 0;
 
     public Screen(){
 
