@@ -18,9 +18,8 @@ public class Screen extends JPanel {
     private int startingX = 0;
     private int startingY = 0;
     private double area = 0;
-
+    
     public Screen(){
-
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -40,7 +39,9 @@ public class Screen extends JPanel {
                 x = e.getX();
                 y = e.getY();
                 if(isMousePressed){
-                    points.add(new int[] {x,y});
+                    if(points.isEmpty() || (points.get(points.size()-1))[0] <= x){
+                        points.add(new int[] {x,y});
+                    }
                 }
             }
         });
@@ -65,8 +66,9 @@ public class Screen extends JPanel {
         if(clearScreen){
             points.clear();
             clearScreen = false;
-            System.out.println("1:"+area);
-            System.out.println("2:"+Area);
+            if(area != 0){
+                System.out.printf("Area: %.4f cm^2", area/(37.8*37.8) );
+            }
         } else{
             int localX = 0;
             int localY = 0;
