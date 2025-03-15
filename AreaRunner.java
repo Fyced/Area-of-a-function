@@ -11,7 +11,7 @@ public class AreaRunner {
         window.setResizable(false);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        Screen mousePanel = new Screen();
+        Screen mousePanel = new Screen(height,width);
         window.add(mousePanel);  // Añadimos el panel a la ventana
         
         window.setVisible(true);
