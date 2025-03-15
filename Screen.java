@@ -10,84 +10,84 @@ import javax.swing.JPanel;
 
 
 public class Screen extends JPanel {
-    private static boolean isMousePressed = false;  //Variable that checks if the user is still pressing the click, used only to call the paint method
-    private static boolean clearScreen = false;     // Variable that checks if it is needed to clear the screen, used only by that method
-    private static int x;                           //Variable that stores the x coordinate of the mouse
-    private static int y;                           //Variable that stores the y coordinate of the mouse
-    private List<int[]> points = new ArrayList<>(); //Variable that stores all the points that are going to be used to calculate the area
-    private int startingY = 0;                      //Variable that stores the coordinate on y of the first point of the function
-    private double area = 0;                        // Total of area of the function. It keeps increasing due to the addition of each differential of areas
-
-    //Constructor of the class that creates the mouse listener for when it is pressed and released, and when it moves.
-    //It also creates the timer that is constantly running in order to paint the screen
-    public Screen(){
+    private static boolean isMousePressed = false;
+    private static boolean clearScreen = false;
+    private static int x;
+    private static int y;
+    private List<int[]> points = new ArrayList<>();
+    private int startingY = 0;
+    private double area = 0;
+    private int heightW = 0;
+    private int widthW = 0;
+    
+    public Screen(int heightW, int widthW){
+        this.heightW = heightW;
+        this.widthW = widthW;
         this.addMouseListener(new MouseAdapter() {
-            @Override        //Method for when the mouse is pressed 
+            @Override
             public void mousePressed(MouseEvent e) {
-                isMousePressed = true;    //It states that the mouse is being pressed
-                clearScreen = true;       //It is needed to clear the screen before painting a new function
+                isMousePressed = true;
+                clearScreen = true;
             }
 
-            @Override       //Method for when the mouse is pressed 
+            @Override
             public void mouseReleased(MouseEvent e) {
                 isMousePressed = false;
                 if(area != 0){
-                    System.out.printf("Area: %.4f cm^2\n", area/(37.8*37.8) );    //It prints the value of the area in cm^2 and only showing 4 decimals
+                    System.out.printf("Area: %.4f cm^2\n", area/(37.8*37.8) );
                     area = 0;
                 }
             }
         });
 
         this.addMouseMotionListener(new MouseAdapter(){
-            @Override        //Method for when the mouse is moved 
+            @Override
             public void mouseDragged(MouseEvent e){
-                x = e.getX();    //It stores the y coordinate of the mouse
-                y = e.getY();    //It stores the x coordinate of the mouse
+                x = e.getX();
+                y = e.getY();
                 if(isMousePressed){
                     if(points.isEmpty() || (points.get(points.size()-1))[0] <= x){
-                        points.add(new int[] {x,y});    //It creates a new point when the mouse is pressed and when the x coordinate 
-                                                        //is bigger than the x in the last point. To prevent having two y in one x
+                        points.add(new int[] {x,y});
                     }
                 }
             }
         });
 
-        Timer timer = new Timer();        //Creation of the timer that is always running
+        Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run(){
                 if(isMousePressed){
                     //System.out.println(x + "\t" + y);
-                    repaint();        //If the mouse is pressed, it calls method that paints the function
+                    repaint();
                 }
             }
-        }, 0, 1); // Executes every 0,001 seconds and without delay
+        }, 0, 1); // Ejecuta cada 0,001 segundo
     }
 
     @Override
-    public void paintComponent(Graphics g){        //Method that paints the function
+    public void paintComponent(Graphics g){
         super.paintComponent(g);
-        g.setColor(Color.black);    //Color of the function in black
+        g.setColor(Color.black);
 
         if(clearScreen){
-            points.clear();        //Removes all the previous points of the last function
-            clearScreen = false;   //It changes the value because the screen has been cleared
+            points.clear();
+            clearScreen = false;
         } else{
-            int localX = 0;   //Stores the coordinates of the last point 
+            int localX = 0;
             int localY = 0;
-            //Loop that draws every point stored previously
+            g.fillRect(points.get(0)[0], points.get(0)[1], widthW - points.get(0)[0], 3); // Eje horizontal
+            g.fillRect(points.get(0)[0], 0, 3, points.get(0)[1]); // Eje vertical
             for(int[] point: points){
                 if(localX == localY && localX == 0){
-                    //If it's the first point
                     g.fillRect(point[0], point[1], 3, 3);
-                    startingY = point[1];    //States that this point is the point 0 of the reference system
-                    area = 0;                //Eliminates the value of the area of the previous function
+                    //startingX = point[0];
+                    startingY = point[1];
+                    area = 0;
                 } else {
-                    //If its any point other than the first one
                     g.drawLine(localX, localY, point[0], point[1]);
                     //g.fillRect(point[0], point[1], 3, 3);
-                    area += calculateArea(localX, localY, point[0], point[1]);    //It calls the method that calcultates the area for that differential of 
-                                                                                  //the function
+                    area += calculateArea(localX, localY, point[0], point[1]);
                 }
                 localX = point[0];
                 localY = point[1];
@@ -95,11 +95,10 @@ public class Screen extends JPanel {
         }
     }
 
-    //Method to calculate the area of every differential of area of the function
     public double calculateArea(int absoluteWidth1,int absoluteHeight1,int absoluteWidth2,int absoluteHeight2){
-        int Area1 = (absoluteWidth2 - absoluteWidth1) * (startingY - absoluteHeight1);    //Area of the first height
-        int Area2 = (absoluteWidth2 - absoluteWidth1) * (startingY - absoluteHeight2);    //Area of the second height
-        double differentialOfArea = (Area1 + Area2)/2.0;           //Total of area of this differential
+        int Area1 = (absoluteWidth2 - absoluteWidth1) * (startingY - absoluteHeight1);
+        int Area2 = (absoluteWidth2 - absoluteWidth1) * (startingY - absoluteHeight2);
+        double differentialOfArea = (Area1 + Area2)/2.0;
         return differentialOfArea;
 
     }
